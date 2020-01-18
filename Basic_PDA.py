@@ -5,7 +5,7 @@ import wolframalpha # to calculate strings into formula
 import wikipedia
 import requests 
 
-appId = '3E2455-YQGH42L6AT'
+appId = 'wolframalpha app id'
 client = wolframalpha.Client(appId)
 
 num = 1
