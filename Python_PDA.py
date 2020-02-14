@@ -1,31 +1,31 @@
-import playsound # to play saved mp3 file 
-from gtts import gTTS # google text to speech 
-import os # to save/open files 
-import wolframalpha # to calculate strings into formula 
+import playsound # to play saved mp3 file
+from gtts import gTTS # google text to speech
+import os # to save/open files
+import wolframalpha # to calculate strings into formula
 import wikipedia
-import requests 
+import requests
 
-appId = 'wolframalpha app id'
+appId = '3E2455-Y47PKRKLXH'
 client = wolframalpha.Client(appId)
 
 num = 1
-def assistant_speaks(output): 
-    global num 
-  
-    # num to rename every audio file  
-    # with different name to remove ambiguity 
+def assistant_speaks(output):
+    global num
+
+    # num to rename every audio file
+    # with different name to remove ambiguity
     num += 1
-    print("PerSon : ", output) 
-  
-    toSpeak = gTTS(text = output, lang ='en', slow = False) 
-    # saving the audio file given by google text to speech 
-    file = str(num)+".mp3" 
-    toSpeak.save(file) 
-      
-    # playsound package is used to play the same file. 
-    playsound.playsound(file, True)  
-    os.remove(file) 
-  
+    print("PerSon : ", output)
+
+    toSpeak = gTTS(text = output, lang ='en', slow = False)
+    # saving the audio file given by google text to speech
+    file = str(num)+".mp3"
+    toSpeak.save(file)
+
+    # playsound package is used to play the same file.
+    playsound.playsound(file, True)
+    os.remove(file)
+
 def removeBrackets(variable):
       return variable.split('(')[0]
 
@@ -42,10 +42,10 @@ def search_wiki(keyword=''):
   if not searchResults:
     print("No result from Wikipedia")
     return
-  # Search for page... try block 
+  # Search for page... try block
   try:
     page = wikipedia.page(searchResults[0])
-  except wikipedia.DisambiguationError, err:
+  except wikipedia.DisambiguationError:
     # Select the first item in the list
     page = wikipedia.page(err.options[0])
   #encoding the response to utf-8
@@ -54,17 +54,6 @@ def search_wiki(keyword=''):
   # printing the result
   assistant_speaks(wikiSummary)
 
-  
-def primaryImage(title=''):
-    url = 'http://en.wikipedia.org/w/api.php'
-    data = {'action':'query', 'prop':'pageimages','format':'json','piprop':'original','titles':title}
-    try:
-        res = requests.get(url, params=data)
-        key = res.json()['query']['pages'].keys()[0]
-        imageUrl = res.json()['query']['pages'][key]['original']['source']
-        print(imageUrl)
-    except Exception, err:
-        print('Exception while finding image:= '+str(err))
 
 def search(text=''):
   res = client.query(text)
@@ -85,7 +74,6 @@ def search(text=''):
       assistant_speaks(result)
       question = resolveListOrDict(pod0['subpod'])
       question = removeBrackets(question)
-      primaryImage(question)
     else:
       # extracting wolfram question interpretation from pod0
       question = resolveListOrDict(pod0['subpod'])
@@ -93,27 +81,26 @@ def search(text=''):
       question = removeBrackets(question)
       # searching for response from wikipedia
       search_wiki(question)
-      primaryImage(question)
 
 
 
 
-  
-# Driver Code 
-if __name__ == "__main__": 
-    assistant_speaks("What's your name, Human?") 
+
+# Driver Code
+if __name__ == "__main__":
+    assistant_speaks("What's your name, Friend")
     name ='Human'
-    name = raw_input("Answer: ") 
-    assistant_speaks("Hello, " + name + '.') 
-      
-    while(1): 
-  
-        assistant_speaks("What can i do for you?") 
-        text = raw_input("Answer: ")
-  
-        if "exit" in str(text) or "bye" in str(text) or "sleep" in str(text): 
-            assistant_speaks("Ok bye, "+ name+'.') 
+    name = input("Answer: ")
+    assistant_speaks("Hello, " + name + '.')
+
+    while(1):
+
+        assistant_speaks("What can i do for you?")
+        text = input("Answer: ")
+
+        if "exit" in str(text) or "bye" in str(text) or "sleep" in str(text):
+            assistant_speaks("Ok bye, "+ name+'.')
             break
-  
-        # calling process text to process the query 
-        search(text) 
+
+        # calling process text to process the query
+        search(text)
